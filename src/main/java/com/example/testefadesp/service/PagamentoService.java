@@ -6,8 +6,13 @@ import com.example.testefadesp.model.enums.StatusPagamento;
 import com.example.testefadesp.repositories.PagamentoRepository;
 import com.example.testefadesp.service.exceptions.ArgumentoInvalidoException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +60,24 @@ public class PagamentoService {
                 default:
                     throw  new ArgumentoInvalidoException("Status inválido para pagamento");
         }
+    }
+
+    public List<Pagamento> listarTodos(Integer codigoDebito, String cpfOuCnpjPagador, StatusPagamento statusPagamento) {
+
+        Specification<Pagamento> specification = ((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if(codigoDebito != null) {
+                predicates.add(criteriaBuilder.equal(root.get("codigoDebito"), codigoDebito));
+            }
+            if(cpfOuCnpjPagador != null) {
+                predicates.add(criteriaBuilder.equal(root.get("cpfOuCnpjPagador"), cpfOuCnpjPagador));
+            }
+            if(statusPagamento != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), statusPagamento));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        });
+
+        return pagamentoRepository.findAll(specification);
     }
 }

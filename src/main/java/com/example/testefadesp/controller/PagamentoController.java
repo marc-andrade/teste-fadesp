@@ -1,6 +1,7 @@
 package com.example.testefadesp.controller;
 
 import com.example.testefadesp.model.Pagamento;
+import com.example.testefadesp.model.enums.StatusPagamento;
 import com.example.testefadesp.service.PagamentoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/pagamentos")
@@ -30,6 +32,11 @@ public class PagamentoController {
         return ResponseEntity.ok().body(pagamentoService.atualizarStatus(pagamento));
     }
 
-
+    @GetMapping
+    public ResponseEntity<List<Pagamento>> listarTodos(@RequestParam(required = false) Integer codigoDebito,
+                                                       @RequestParam(required = false) String cpfOuCnpjPagador,
+                                                       @RequestParam(required = false) StatusPagamento statusPagamento) {
+        return ResponseEntity.ok().body(pagamentoService.listarTodos(codigoDebito, cpfOuCnpjPagador, statusPagamento));
+    }
 
 }
