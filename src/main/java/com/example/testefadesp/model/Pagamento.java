@@ -2,7 +2,9 @@ package com.example.testefadesp.model;
 
 import com.example.testefadesp.model.enums.MetodoDePagamento;
 import com.example.testefadesp.model.enums.StatusPagamento;
+import com.example.testefadesp.service.dto.NovoPagamentoDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,5 +29,15 @@ public class Pagamento {
     private String numeroCartao;
     private BigDecimal valor;
     @Enumerated(EnumType.STRING)
-    private StatusPagamento status = StatusPagamento.PENDENTE_DE_PROCESSAMENTO;
+    @NotNull
+    private StatusPagamento status;
+
+    public Pagamento(NovoPagamentoDTO dto) {
+        this.codigoDebito = dto.getCodigoDebito();
+        this.cpfOuCnpjPagador = dto.getCpfOuCnpjPagador();
+        this.metodoDePagamento = dto.getMetodoDePagamento();
+        this.numeroCartao = dto.getNumeroCartao();
+        this.valor = dto.getValor();
+        this.status = StatusPagamento.PENDENTE_DE_PROCESSAMENTO;
+    }
 }
