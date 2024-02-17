@@ -32,10 +32,14 @@ public class PagamentoService {
     @Transactional
     public PagamentoDTO receberPagamento(NovoPagamentoDTO dto) {
 
-        if(dto.getMetodoDePagamento() != null &&
-                (dto.getMetodoDePagamento() != MetodoDePagamento.CARTAO_DEBITO &&
-                dto.getMetodoDePagamento() != MetodoDePagamento.CARTAO_CREDITO) && dto.getNumeroCartao() != null) {
+        if(dto.getMetodoDePagamento() == null) {
+            throw  new ArgumentoInvalidoException("Método de pagamento não pode ser nulo");
+        }
+        if((dto.getMetodoDePagamento() != MetodoDePagamento.CARTAO_DEBITO && dto.getMetodoDePagamento() != MetodoDePagamento.CARTAO_CREDITO) && dto.getNumeroCartao() != null) {
             throw  new ArgumentoInvalidoException("Numero do cartão não pode ser informado para o método de pagamento informado");
+        }
+        if((dto.getMetodoDePagamento() == MetodoDePagamento.CARTAO_DEBITO || dto.getMetodoDePagamento() == MetodoDePagamento.CARTAO_CREDITO) && dto.getNumeroCartao() == null) {
+            throw  new ArgumentoInvalidoException("Numero do cartão deve ser informado para o método de pagamento informado");
         }
         Pagamento pagamento = new Pagamento(dto);
         pagamento.setStatus(StatusPagamento.PENDENTE_DE_PROCESSAMENTO);
