@@ -35,8 +35,6 @@ class PagamentoServiceTest {
 
 
     private Pagamento pagamento;
-    private PagamentoDTO pagamentoDTO;
-    List<PagamentoDTO> listaPagamentoDTO;
     private NovoPagamentoDTO novoPagamentoDTO;
     private AtualizarStatusPagamentoDTO atualizarStatusPagamentoDTO;
     private Long idExistente;
@@ -47,7 +45,6 @@ class PagamentoServiceTest {
         idExistente = 1L;
         idNaoExistente = 2L;
         pagamento = Factory.criarPagamento();
-        pagamentoDTO = Factory.criarPagamentoDTO();
         novoPagamentoDTO = Factory.criarNovoPagamentoDTO();
         atualizarStatusPagamentoDTO = Factory.criarAtualizarStatusPagamentoDTO();
 

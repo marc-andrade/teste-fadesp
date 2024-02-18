@@ -5,17 +5,12 @@ import com.example.testefadesp.model.enums.MetodoDePagamento;
 import com.example.testefadesp.model.enums.StatusPagamento;
 import com.example.testefadesp.service.dto.AtualizarStatusPagamentoDTO;
 import com.example.testefadesp.service.dto.NovoPagamentoDTO;
-import com.example.testefadesp.service.dto.PagamentoDTO;
 
 import java.math.BigDecimal;
 
 public class Factory {
     public static Pagamento criarPagamento() {
         return new Pagamento(1L,1,"12345678901", MetodoDePagamento.BOLETO,null,new BigDecimal("100.50"), StatusPagamento.PENDENTE_DE_PROCESSAMENTO);
-    }
-    public static PagamentoDTO criarPagamentoDTO() {
-        Pagamento pagamento = criarPagamento();
-        return new PagamentoDTO(pagamento);
     }
 
     public static NovoPagamentoDTO criarNovoPagamentoDTO() {
