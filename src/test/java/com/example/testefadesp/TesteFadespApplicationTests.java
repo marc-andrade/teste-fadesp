@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class TesteFadespApplicationTests {
 
     @Test
-    void contextLoads() {
+    void principal() {
+        TesteFadespApplication.main(new String[] {});
     }
 
 }

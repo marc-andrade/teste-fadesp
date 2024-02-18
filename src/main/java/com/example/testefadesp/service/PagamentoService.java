@@ -26,7 +26,7 @@ public class PagamentoService {
     private final PagamentoRepository pagamentoRepository;
 
     @Transactional
-    public Pagamento findById(Long id) {
+    public Pagamento buscarPorId(Long id) {
         return pagamentoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado para o ID: " + id));
     }
     @Transactional
@@ -45,35 +45,36 @@ public class PagamentoService {
         pagamento.setStatus(StatusPagamento.PENDENTE_DE_PROCESSAMENTO);
         return new PagamentoDTO(pagamentoRepository.save(pagamento));
     }
+
     @Transactional
     public PagamentoDTO atualizarStatus(AtualizarStatusPagamentoDTO dto) {
 
-        Pagamento entidadeBanco = findById(dto.getId());
+        Pagamento entidadeBanco = buscarPorId(dto.getId());
 
-        if(dto.getStatus() == null) {
-            throw  new ArgumentoInvalidoException("Status do pagamento não pode ser nulo");
+        if (dto.getStatus() == null) {
+            throw new ArgumentoInvalidoException("Status do pagamento não pode ser nulo");
         }
 
         switch (entidadeBanco.getStatus()) {
             case PENDENTE_DE_PROCESSAMENTO:
-                if(dto.getStatus() == StatusPagamento.PROCESSADO_COM_SUCESSO ||
-                dto.getStatus() == StatusPagamento.PROCESSADO_COM_FALHA) {
+                if (dto.getStatus() == StatusPagamento.PROCESSADO_COM_SUCESSO ||
+                        dto.getStatus() == StatusPagamento.PROCESSADO_COM_FALHA) {
                     entidadeBanco.setStatus(dto.getStatus());
                     return new PagamentoDTO(pagamentoRepository.save(entidadeBanco));
                 } else {
-                    throw  new ArgumentoInvalidoException("Status inválido para pagamento pendente de processamento");
+                    throw new ArgumentoInvalidoException("Status inválido para pagamento pendente de processamento");
                 }
             case PROCESSADO_COM_SUCESSO:
-                throw  new ArgumentoInvalidoException("Pagamento já processado com sucesso");
+                throw new ArgumentoInvalidoException("Pagamento já processado com sucesso");
             case PROCESSADO_COM_FALHA:
-                if(dto.getStatus() == StatusPagamento.PENDENTE_DE_PROCESSAMENTO) {
+                if (dto.getStatus() == StatusPagamento.PENDENTE_DE_PROCESSAMENTO) {
                     entidadeBanco.setStatus(dto.getStatus());
                     return new PagamentoDTO(pagamentoRepository.save(entidadeBanco));
                 } else {
-                    throw  new ArgumentoInvalidoException("Pagamento processado com falha nao pode ser alterado para outro status diferente de pendente de processamento");
+                    throw new ArgumentoInvalidoException("Pagamento processado com falha nao pode ser alterado para outro status diferente de pendente de processamento");
                 }
-                default:
-                    throw  new ArgumentoInvalidoException("Status inválido para pagamento");
+            default:
+                throw new ArgumentoInvalidoException("Status inválido para pagamento");
         }
     }
     @Transactional
@@ -99,7 +100,7 @@ public class PagamentoService {
     public void delete(Long id) {
 
         try {
-            Pagamento pagamento = findById(id);
+            Pagamento pagamento = buscarPorId(id);
             if (pagamento.getStatus() == StatusPagamento.PROCESSADO_COM_SUCESSO) {
                 throw new ArgumentoInvalidoException("Pagamento processado com sucesso não pode ser apagado");
             }
