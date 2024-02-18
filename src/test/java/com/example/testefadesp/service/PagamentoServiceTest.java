@@ -16,11 +16,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class PagamentoServiceTest {
@@ -33,6 +36,7 @@ class PagamentoServiceTest {
 
     private Pagamento pagamento;
     private PagamentoDTO pagamentoDTO;
+    List<PagamentoDTO> listaPagamentoDTO;
     private NovoPagamentoDTO novoPagamentoDTO;
     private AtualizarStatusPagamentoDTO atualizarStatusPagamentoDTO;
     private Long idExistente;
@@ -51,6 +55,10 @@ class PagamentoServiceTest {
         when(pagamentoRepository.findById(idNaoExistente)).thenReturn(Optional.empty());
 
         when(pagamentoRepository.save(Mockito.any(Pagamento.class))).thenReturn(pagamento);
+
+        when(pagamentoRepository.findAll()).thenReturn(List.of(pagamento));
+
+        doNothing().when(pagamentoRepository).deleteById(idExistente);
     }
 
     @Test
@@ -174,13 +182,24 @@ class PagamentoServiceTest {
     }
 
 
-//
-//    @Test
-//    void listarTodos() {
-//    }
-//
-//    @Test
-//    void delete() {
-//    }
+    @Test
+    void listarTodosEntaoRetornarUmaListaDePagamentosQuandoSucesso() {
+        int codigoDebito = 1;
+        String cpfOuCnpjPagador = "12345678901";
+        StatusPagamento statusPagamento = StatusPagamento.PENDENTE_DE_PROCESSAMENTO;
+
+        List<PagamentoDTO> listaPagamentoDTO = pagamentoService.listarTodos(codigoDebito, cpfOuCnpjPagador, statusPagamento);
+
+        assertNotNull(listaPagamentoDTO);
+        verify(pagamentoRepository, times(1)).findAll(any(Specification.class));
+    }
+
+    @Test
+    void deleteEntaoNaoFacaNadaQuandoIdExistir() {
+
+        assertDoesNotThrow(() -> pagamentoService.delete(idExistente));
+
+        verify(pagamentoRepository, times(1)).deleteById(idExistente);
+    }
 
 }
