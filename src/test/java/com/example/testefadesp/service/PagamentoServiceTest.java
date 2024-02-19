@@ -53,7 +53,7 @@ class PagamentoServiceTest {
 
         when(pagamentoRepository.save(Mockito.any(Pagamento.class))).thenReturn(pagamento);
 
-        when(pagamentoRepository.findAll()).thenReturn(List.of(pagamento));
+        when(pagamentoRepository.findAll(any(Specification.class))).thenReturn(List.of(pagamento));
 
         doNothing().when(pagamentoRepository).deleteById(idExistente);
     }
